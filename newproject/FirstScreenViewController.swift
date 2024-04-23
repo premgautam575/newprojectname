@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
+import FirebaseCore
 
 class FirstScreenViewController: UIViewController {
     
@@ -20,6 +22,47 @@ class FirstScreenViewController: UIViewController {
         self.errorlbl.isHidden = true
         // Do any additional setup after loading the view.
     }
+    
+    @IBAction func googlebtn(_ sender: Any) {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        // Start the sign in flow!
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] result, error in
+            guard error == nil else {
+                // ...
+                return
+            }
+            
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString
+            else {
+                // ...
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+            
+            // ...
+            
+            Auth.auth().signIn(with: credential) { result, error in
+                let controller = ThirdScreenViewController()
+                self.navigationController?.pushViewController(controller, animated: true)
+                print("sign in")
+                // At this point, our user is signed in
+            }
+        }
+    }
+    
+    @IBAction func applebtn(_ sender: Any) {
+    }
+    
+    
+
     
     @IBAction func signInbtn(_ sender: Any) {
         
