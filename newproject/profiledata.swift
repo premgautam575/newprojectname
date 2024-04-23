@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+
+struct profiledata : Codable{
+    var bio : String?
+    var cityname : String?
+    var countryname : String?
+    var displayname : String?
+    var email : String?
+    var username : String?
+    
+}
